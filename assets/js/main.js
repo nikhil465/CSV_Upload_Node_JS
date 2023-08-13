@@ -1,6 +1,6 @@
 // Load Google Charts and set callback function
-// google.charts.load('current', { packages: ['corechart'] });
-// google.charts.setOnLoadCallback(drawChart);
+google.charts.load("current", { packages: ["corechart"] });
+google.charts.setOnLoadCallback(drawChart);
 
 function drawChart(dataArray) {
   const selectedColumnIndex = 0; // Change this to the desired column index

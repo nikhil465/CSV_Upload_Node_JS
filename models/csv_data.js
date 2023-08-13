@@ -1,7 +1,17 @@
+// models/csvData.js
+
 const mongoose = require("mongoose");
 
-const csvDataSchema = new mongoose.Schema({}, { timestamps: true });
-
-const CsvData = mongoose.model("CsvData", csvDataSchema);
+const csvSchema = new mongoose.Schema(
+  {
+    filename: {
+      type: String,
+      required: true,
+    },
+    data: [{}],
+  },
+  { strict: false }
+);
+const CsvData = mongoose.model("CsvData", csvSchema);
 
 module.exports = CsvData;

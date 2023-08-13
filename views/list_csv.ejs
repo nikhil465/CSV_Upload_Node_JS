@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="/css/list_csv.css">
+<div class="container">
+    <h1>CSV File Management</h1>
+
+    <h2>Upload a CSV File</h2>
+    <form class="upload-form" action="/upload" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+        <input type="file" name="csvfile" accept=".csv">
+        <button type="submit">Upload CSV</button>
+    </form>
+    <h1>List of Uploaded CSV Files</h1>
+    <% if(csvFiles.length != 0) { %> 
+        <ul>
+            <% for (let i = 0; i < csvFiles.length; i++) { %>
+                <li>
+                    <a href="/csvdata/<%= csvFiles[i]._id %>"><%= csvFiles[i].filename %></a>
+                </li>
+            <% } %>
+        </ul>
+    <%} %>
+</div>
+<script src="/js/main.js"></script>

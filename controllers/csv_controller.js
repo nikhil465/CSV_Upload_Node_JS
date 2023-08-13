@@ -1,7 +1,8 @@
-const CsvData = require("../models/csvData");
+const CsvData = require("../models/csv_data");
 const multer = require("multer");
 const path = require("path");
-
+const fs = require("fs");
+const csvParser = require("csv-parser");
 // Set up storage and file type validation for CSV file upload
 const storage = multer.diskStorage({
   destination: "./uploads",
@@ -23,10 +24,29 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage, fileFilter }).single("csvfile");
 
-exports.getCsvData = async (req, res) => {
+exports.listCsv = async (req, res) => {
   try {
-    const data = await CsvData.find();
-    return res.render("index", { data: data });
+    const csvFiles = await CsvData.find().select("filename");
+    console.log(csvFiles);
+    return res.render("list_csv", {
+      title: "CSV Upload | List CSV",
+      csvFiles: csvFiles,
+    }); // Pass tableHeaders
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal Server Error");
+  }
+};
+
+exports.csvData = async (req, res) => {
+  try {
+    const csvData = await CsvData.findById(req.params.id);
+    const csvHeaders = Object.keys(csvData.data[0] || {});
+    return res.render("list_csv", {
+      title: "CSV Upload | CSV Data",
+      csvData: csvData.data,
+      csvHeaders: csvHeaders,
+    }); // Pass tableHeaders
   } catch (error) {
     console.error(error);
     return res.status(500).send("Internal Server Error");
@@ -36,7 +56,7 @@ exports.getCsvData = async (req, res) => {
 exports.uploadCsv = (req, res) => {
   upload(req, res, async (err) => {
     if (err instanceof multer.MulterError) {
-      return res.status(400).send("File upload error.");
+      return res.status(400).send("File upload error." + err);
     } else if (err) {
       return res.status(500).send("Internal Server Error.");
     }
@@ -52,14 +72,21 @@ exports.uploadCsv = (req, res) => {
         .on("data", (data) => results.push(data))
         .on("end", async () => {
           // Save CSV data to the database
-          await CsvData.insertMany(results);
+          // console.log("Results : ", results);
+          const tableHeaders = Object.keys(results[0] || {});
+
+          let insertedData = await CsvData.create({
+            filename: req.file.originalname,
+          });
+          insertedData.data.push(...results);
+          insertedData.save();
 
           // Redirect back to the main page
-          res.redirect("/");
+          return res.redirect("/"); // Pass selectedCsv variable
         });
     } catch (error) {
       console.error(error);
-      res.status(500).send("Error processing CSV data.");
+      return res.status(500).send("Error processing CSV data.");
     }
   });
 };

@@ -1,0 +1,87 @@
+<div class="container">
+    <h1>CSV Data Display</h1>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search by column...">
+    </div>
+
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <% for (let header of csvHeaders) { %>
+                    <th><%= header %></th>
+                <% } %>
+            </tr>
+        </thead>
+        <tbody>
+            <% for (let row of csvData) { %>
+                <tr>
+                    <% for (let value of row) { %>
+                        <td><%= value %></td>
+                    <% } %>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+
+    <div class="pagination-container">
+        <button id="prevPage">Previous</button>
+        <span id="currentPage">Page 1</span>
+        <button id="nextPage">Next</button>
+    </div>
+</div>
+
+<script>
+    const dataTable = document.getElementById('dataTable');
+    const searchInput = document.getElementById('searchInput');
+    const prevPageButton = document.getElementById('prevPage');
+    const nextPageButton = document.getElementById('nextPage');
+    const currentPageSpan = document.getElementById('currentPage');
+    const rowsPerPage = 100;
+
+    let currentPage = 1;
+    let filteredData = [...csvData]; // Replace csvData with your actual data
+
+    // Update the table with filtered data based on search input and current page
+    function updateTable() {
+        const searchText = searchInput.value.toLowerCase();
+        const startIdx = (currentPage - 1) * rowsPerPage;
+        const endIdx = startIdx + rowsPerPage;
+
+        const filteredRows = filteredData.filter(row =>
+            row.some(value => value.toLowerCase().includes(searchText))
+        );
+
+        const paginatedRows = filteredRows.slice(startIdx, endIdx);
+
+        dataTable.querySelector('tbody').innerHTML = paginatedRows
+            .map(row => `<tr>${row.map(value => `<td>${value}</td>`).join('')}</tr>`)
+            .join('');
+
+        currentPageSpan.textContent = `Page ${currentPage}`;
+    }
+
+    // Pagination event listeners
+    prevPageButton.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            updateTable();
+        }
+    });
+
+    nextPageButton.addEventListener('click', () => {
+        if (currentPage < Math.ceil(filteredData.length / rowsPerPage)) {
+            currentPage++;
+            updateTable();
+        }
+    });
+
+    // Search input event listener
+    searchInput.addEventListener('input', () => {
+        currentPage = 1;
+        updateTable();
+    });
+
+    // Initial table update
+    updateTable();
+</script>
