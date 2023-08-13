@@ -8,7 +8,7 @@ const db = require("./config/mongoose");
 const env = require("./config/environment");
 const morgan = require("morgan");
 
-if (env.name == "production") {
+if (env.name == "development") {
   app.use(
     sassMiddleware({
       src: path.join(__dirname, env.asset_path, "scss"),

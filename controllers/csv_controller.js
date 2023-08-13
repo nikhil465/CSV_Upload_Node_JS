@@ -42,7 +42,7 @@ exports.csvData = async (req, res) => {
   try {
     const csvData = await CsvData.findById(req.params.id);
     const csvHeaders = Object.keys(csvData.data[0] || {});
-    return res.render("list_csv", {
+    return res.render("csv_data", {
       title: "CSV Upload | CSV Data",
       csvData: csvData.data,
       csvHeaders: csvHeaders,

@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/css/csv_data.css">
 <div class="container">
     <h1>CSV Data Display</h1>
 
@@ -9,14 +10,23 @@
         <thead>
             <tr>
                 <% for (let header of csvHeaders) { %>
-                    <th><%= header %></th>
+                    <th>
+                        <div class="column-header">
+                            <span><%= header %></span>
+                        </div>
+                        <button class="sort-button" data-column="<%= header %>">
+                            <span class="sort-icon">&#9650;</span>
+                            <span class="sort-icon">&#9660;</span>
+                        </button>
+                        
+                    </th>
                 <% } %>
             </tr>
         </thead>
         <tbody>
             <% for (let row of csvData) { %>
                 <tr>
-                    <% for (let value of row) { %>
+                    <% for (let value of Object.values(row)) { %>
                         <td><%= value %></td>
                     <% } %>
                 </tr>
@@ -37,29 +47,62 @@
     const prevPageButton = document.getElementById('prevPage');
     const nextPageButton = document.getElementById('nextPage');
     const currentPageSpan = document.getElementById('currentPage');
+    const sortButtons = document.querySelectorAll('.sort-button');
     const rowsPerPage = 100;
 
     let currentPage = 1;
-    let filteredData = [...csvData]; // Replace csvData with your actual data
+    let filteredData = [...<%- JSON.stringify(csvData) %>]; // Replace csvData with your actual data
+    console.log(filteredData);
+    // Sorting function for ascending order
+    function sortAscending(columnIndex) {
+        filteredData.sort((a, b) => a[columnIndex].localeCompare(b[columnIndex]));
+    }
 
-    // Update the table with filtered data based on search input and current page
+    // Sorting function for descending order
+    function sortDescending(columnIndex) {
+        filteredData.sort((a, b) => b[columnIndex].localeCompare(a[columnIndex]));
+    }
+
+    // Update the table with filtered data based on search input, current page, and sorting
     function updateTable() {
         const searchText = searchInput.value.toLowerCase();
         const startIdx = (currentPage - 1) * rowsPerPage;
         const endIdx = startIdx + rowsPerPage;
 
         const filteredRows = filteredData.filter(row =>
-            row.some(value => value.toLowerCase().includes(searchText))
+            Object.values(row).some(value =>
+                typeof value === 'string' && value.toLowerCase().includes(searchText)
+            )
         );
 
         const paginatedRows = filteredRows.slice(startIdx, endIdx);
 
         dataTable.querySelector('tbody').innerHTML = paginatedRows
-            .map(row => `<tr>${row.map(value => `<td>${value}</td>`).join('')}</tr>`)
+            .map(row =>
+                `<tr>${Object.values(row)
+                    .map(value => `<td>${value}</td>`)
+                    .join('')}</tr>`
+            )
             .join('');
 
         currentPageSpan.textContent = `Page ${currentPage}`;
     }
+
+    // Sorting event listeners
+    sortButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const columnIndex = button.getAttribute('data-column');
+            const isDescending = button.classList.toggle('desc');
+
+            if (isDescending) {
+                sortDescending(columnIndex);
+            } else {
+                sortAscending(columnIndex);
+            }
+
+            updateTable();
+        });
+    });
 
     // Pagination event listeners
     prevPageButton.addEventListener('click', () => {
@@ -72,6 +115,7 @@
     nextPageButton.addEventListener('click', () => {
         if (currentPage < Math.ceil(filteredData.length / rowsPerPage)) {
             currentPage++;
+            console.log(currentPage);
             updateTable();
         }
     });

@@ -1,0 +1,89 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow-x: auto;
+  /* Enable horizontal scrolling */ }
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 20px; }
+
+.search-container {
+  margin-bottom: 20px; }
+
+#searchInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  white-space: nowrap;
+  /* Prevent table cells from wrapping */ }
+
+thead th {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 10px;
+  text-align: left;
+  font-weight: bold;
+  position: relative; }
+
+/* Styling for the column header */
+.column-header {
+  display: inline-block;
+  align-items: center;
+  margin-right: 30px; }
+
+.sort-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1; }
+
+.sort-icon {
+  font-size: 12px;
+  margin-left: 4px;
+  display: inline-block; }
+
+/* Add spacing between column name and sorting buttons */
+thead th {
+  padding-right: 20px; }
+
+tbody td {
+  padding: 10px;
+  border: 1px solid #ddd; }
+
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; }
+
+#prevPage,
+#nextPage {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; }
+
+#prevPage:hover,
+#nextPage:hover {
+  background-color: #0056b3; }
+
+#currentPage {
+  font-weight: bold; }
